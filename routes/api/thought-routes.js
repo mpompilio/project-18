@@ -13,8 +13,11 @@ router
 .route('/:id')
 .get(getThoughtById)
 .put(updateThought)
-.put(addReaction)
 .delete(deleteThought);
+
+router
+.route('/:id/reactions')
+.post(addReaction);
 
 
   module.exports = router;
