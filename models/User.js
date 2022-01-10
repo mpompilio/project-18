@@ -14,13 +14,37 @@ const UserSchema = new Schema(
         type: String,
         required: true,
         unique: true,
-
-        thoughts: [],
-
-        friends: []
+        match: [/^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/, 'Email Invalid'],
       },
-}
+
+        thoughts: [
+          {
+            type: Schema.Types.ObjectId,
+            ref: "Thought",
+          },
+        ],
+
+        friends: [
+          {
+            type: Schema.Types.ObjectId,
+            ref: "User",
+          }
+        ]
+      },
+      {
+        toJSON: {
+          virtuals: true,
+          getters: true,
+        },
+        id: false,
+      }
+
   );
+
+// get total count of friends on retrieval
+UserSchema.virtual("friendCount").get(function () {
+  return this.friends.length;
+});
 
   // create the User model
 const User = model('User', UserSchema);

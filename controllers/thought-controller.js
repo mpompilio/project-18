@@ -1,5 +1,5 @@
 const {
-    Thought
+    Thought, User
 } = require('../models');
 
 
@@ -47,18 +47,34 @@ const thoughtController = {
         body
     }, res) {
         Thought.create(body)
-            .then(dbThoughtData => res.json(dbThoughtData))
-            .catch(err => res.status(400).json(err));
+            .then(({ _id}) => {
+                return User.findOneAndUpdate(
+                    { username: body.username },
+                    { $push: { thoughts: _id } },
+                    { new: true }
+                );
+            })
+            .then(dbUserData => {
+                if (!dbUserData) {
+                    res.status(404).json({ message: 'No user found with this username!'});
+                    return;
+                }
+                res.json(dbUserData);
+            })
+            .catch(err => res.json(err));
     },
+
     addReaction({ params, body }, res) {
+        console.log(params);
         Thought.findOneAndUpdate(
-          { _id: params.reactionId },
+          { _id: params.id },
           { $push: { reactions: body } },
           { new: true }
         )
           .then(dbThoughtData => {
             if (!dbThoughtData) {
               res.status(404).json({ message: 'No thought found with this id!' });
+
               return;
             }
             res.json(dbThoughtData);

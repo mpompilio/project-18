@@ -27,6 +27,13 @@ const ThoughtSchema = new Schema(
         required: true
 
       },
+
+      username: {
+        type: String,
+        required: true,
+        ref: 'User'
+    },
+    
       createdAt: {
         type: Date,
         default: Date.now
@@ -52,5 +59,6 @@ id: false
   // create the User model
 const Thought = model('Thought', ThoughtSchema);
 
-// export the user model
+
+
 module.exports = Thought;
